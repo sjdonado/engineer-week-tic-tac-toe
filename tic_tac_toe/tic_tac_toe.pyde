@@ -4,7 +4,7 @@ import random as rand
 limit = 548.0
 limit_percent = 0.36
 n = 3
-board = [None, None, None, None, None, None, None, None, None]
+board = [None] * n * n
 winner = None
 turn = bool(rand.getrandbits(1))
     
@@ -37,6 +37,33 @@ def mouseReleased():
         print("index: {}".format(index))
         if board[index] == None:
             set_turn(turn, index)
+            
+def draw_board():
+    # y
+    line(200, 26, 200, 574)
+    line(400, 26, 400, 574)
+    # x
+    line(26, 200, 574, 200)
+    line(26, 400, 574, 400)
+    
+def get_index(x, y):
+    index = 0 if x / limit <= limit_percent else 1 if x / limit <= limit_percent * 2 else 2
+    index += 0 if y / limit <= limit_percent else 3 if y / limit <= limit_percent * 2 else 6
+    return index
+
+def drawTurn(turn, index):
+    base = 26
+    margin = limit_percent * 2
+    x_bias = 18 + margin if index == 2 or index == 5 or index == 8 else 12 - margin if index == 1 or index == 4 or index == 7 else 4
+    y_bias = 4 if index <= 2 else 12 - margin if index <= 5 else 18 + margin
+    x = base * x_bias
+    y = base * y_bias
+    print("x -> {} y -> {}".format(x, y))
+    if turn:
+        circle(x, y, 100)
+    else:
+        line(x - base * 2, y - base * 2, x + base * 2, y + base * 2)
+        line(x - base * 2, y + base * 2, x + base * 2, y - base * 2)
             
 def set_turn(player_turn, index):
     global turn, winner
@@ -93,31 +120,4 @@ def generate_moves(n, board, turn, steps = 0):
                 board[index] = turn
                 return generate_moves(n, board, not turn, steps + 1)
     return (winner, steps)
-
-def draw_board():
-    # y
-    line(200, 26, 200, 574)
-    line(400, 26, 400, 574)
-    # x
-    line(26, 200, 574, 200)
-    line(26, 400, 574, 400)
-    
-def get_index(x, y):
-    index = 0 if x / limit <= limit_percent else 1 if x / limit <= limit_percent * 2 else 2
-    index += 0 if y / limit <= limit_percent else 3 if y / limit <= limit_percent * 2 else 6
-    return index
-    
-def drawTurn(turn, index):
-    base = 26
-    distance = limit_percent * 2
-    x_bias = 18 + distance if index == 2 or index == 5 or index == 8 else 12 - distance if index == 1 or index == 4 or index == 7 else 4
-    y_bias = 4 if index <= 2 else 12 - distance if index <= 5 else 18 + distance
-    x = base * x_bias
-    y = base * y_bias
-    print("x -> {} y -> {}".format(x, y))
-    if turn:
-        circle(x, y, 100)
-    else:
-        line(x - base * 2, y - base * 2, x + base * 2, y + base * 2)
-        line(x - base * 2, y + base * 2, x + base * 2, y - base * 2)
         
